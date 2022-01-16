@@ -1,2 +1,5 @@
 # lox
-Bookclub Programming Language
+
+[See Crafting Interpreters](https://craftinginterpreters.com/)
+
+Book club at work.
