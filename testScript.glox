@@ -1,4 +1,7 @@
-Hello there!
-I am a test script
+// This is a comment
+() () // Another comment
+!=
+==
+"A string literal" // A string literal
 
-hello!
+"A non terminated string

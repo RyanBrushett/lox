@@ -3,7 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"lox/runtime"
+	"lox/glox"
 	"os"
 	"strings"
 )
@@ -18,7 +18,7 @@ func runScript(scriptName string) {
 	dat, err := os.ReadFile(scriptName)
 	checkErr(err)
 
-	runtime := runtime.New()
+	runtime := glox.NewRuntime()
 	runtime.Run(string(dat))
 
 	if runtime.HadError {
@@ -29,7 +29,7 @@ func runScript(scriptName string) {
 func runPrompt() {
 	reader := bufio.NewReader(os.Stdin)
 	line := 0
-	runtime := runtime.New()
+	runtime := glox.NewRuntime()
 
 	for {
 		fmt.Printf("(%03d) -> ", line)
