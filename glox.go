@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"lox/runtime"
 	"os"
 	"strings"
 )
@@ -16,12 +17,19 @@ func checkErr(err error) {
 func runScript(scriptName string) {
 	dat, err := os.ReadFile(scriptName)
 	checkErr(err)
-	run(string(dat))
+
+	runtime := runtime.New()
+	runtime.Run(string(dat))
+
+	if runtime.HadError {
+		os.Exit(65)
+	}
 }
 
 func runPrompt() {
 	reader := bufio.NewReader(os.Stdin)
 	line := 0
+	runtime := runtime.New()
 
 	for {
 		fmt.Printf("(%03d) -> ", line)
@@ -30,20 +38,14 @@ func runPrompt() {
 		if strings.Compare(text, "exit!") == 0 {
 			break
 		}
-		run(text)
+
+		runtime.Run(text)
+		if runtime.HadError {
+			runtime.HadError = false // reset error so we don't kill the user's session
+		}
+
 		line += 1
 	}
-}
-
-func run(source string) {
-	// make a scanner with the source as an argument.
-	// tokens := scanner.ScanTokens()
-
-	// for token in tokens
-	//   print token
-	// return nil
-
-	fmt.Printf("=> %s\n", source)
 }
 
 func main() {
