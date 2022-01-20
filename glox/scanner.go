@@ -243,7 +243,7 @@ func (s *scanner) isDigit(c byte) bool {
 }
 
 func (s *scanner) isAlpha(c byte) bool {
-	return unicode.IsLetter(rune(c))
+	return unicode.IsLetter(rune(c)) || c == '_'
 }
 
 func (s *scanner) isAlphaNumeric(c byte) bool {

@@ -37,7 +37,7 @@ func (r *runtime) Run(source string) {
 
 	// for now just print
 	for _, t := range tokens {
-		fmt.Printf("=> %s\n", t)
+		fmt.Printf("%s\n", t)
 	}
 }
 

@@ -80,6 +80,10 @@ func (tt TokenType) String() string {
 		return "IF"
 	case ELSE:
 		return "ELSE"
+	case DOT:
+		return "DOT"
+	case IDENTIFIER:
+		return "IDENTIFIER"
 	default:
 		return "Unknown"
 	}
