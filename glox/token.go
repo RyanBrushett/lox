@@ -68,6 +68,18 @@ func (tt TokenType) String() string {
 		return "STRING"
 	case EQUAL_EQUAL:
 		return "EQUAL_EQUAL"
+	case NUMBER:
+		return "NUMBER"
+	case AND:
+		return "AND"
+	case OR:
+		return "OR"
+	case CLASS:
+		return "CLASS"
+	case IF:
+		return "IF"
+	case ELSE:
+		return "ELSE"
 	default:
 		return "Unknown"
 	}
