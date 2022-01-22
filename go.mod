@@ -1,3 +1,3 @@
-module github.com/RyanBrushett/lox
+module lox
 
 go 1.17
