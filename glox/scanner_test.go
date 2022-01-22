@@ -114,13 +114,7 @@ func TestPunctuators(t *testing.T) {
 }
 
 func TestWhitespace(t *testing.T) {
-	source := `space    tabs				newlines
-
-
-
-
-	end
-	`
+	source := "space     tabs\t\t\t\t\tnewlines\n\n\n\n\nend"
 
 	tokenList := scanSource(source, t)
 	expectedTokens := []*Token{
@@ -128,7 +122,7 @@ func TestWhitespace(t *testing.T) {
 		NewToken(IDENTIFIER, "tabs", nil, 0),
 		NewToken(IDENTIFIER, "newlines", nil, 0),
 		NewToken(IDENTIFIER, "end", nil, 5),
-		NewToken(EOF, "", nil, 6),
+		NewToken(EOF, "", nil, 5),
 	}
 
 	compareTokens(tokenList, expectedTokens, t)

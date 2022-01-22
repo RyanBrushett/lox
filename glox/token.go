@@ -54,40 +54,7 @@ const (
 	EOF
 )
 
-func (tt TokenType) String() string {
-	switch tt {
-	case LEFT_PAREN:
-		return "LEFT_PAREN"
-	case RIGHT_PAREN:
-		return "RIGHT_PAREN"
-	case BANG_EQUAL:
-		return "BANG_EQUAL"
-	case EOF:
-		return "EOF"
-	case STRING:
-		return "STRING"
-	case EQUAL_EQUAL:
-		return "EQUAL_EQUAL"
-	case NUMBER:
-		return "NUMBER"
-	case AND:
-		return "AND"
-	case OR:
-		return "OR"
-	case CLASS:
-		return "CLASS"
-	case IF:
-		return "IF"
-	case ELSE:
-		return "ELSE"
-	case DOT:
-		return "DOT"
-	case IDENTIFIER:
-		return "IDENTIFIER"
-	default:
-		return "Unknown"
-	}
-}
+//go:generate stringer -type=TokenType
 
 type Token struct {
 	tokenType TokenType
