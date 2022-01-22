@@ -1,6 +1,9 @@
 package glox
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type TokenType int
 
@@ -73,5 +76,21 @@ func NewToken(tt TokenType, lexeme string, lit interface{}, line int) *Token {
 }
 
 func (t *Token) String() string {
-	return fmt.Sprintf("%v %v %v %v", t.tokenType, t.lexeme, t.literal, t.line)
+	var literal interface{}
+
+	if t.literal == nil {
+		literal = "null"
+	} else {
+		literal = t.literal
+	}
+
+	if t.tokenType == NUMBER {
+		if strings.Contains(t.lexeme, ".") { // number will already be printed as floating point
+			literal = t.literal
+		} else {
+			literal = fmt.Sprintf("%.1f", t.literal) // lox acceptance tests expect integers to end with `.0`
+		}
+	}
+
+	return fmt.Sprintf("%v %v %v", t.tokenType, t.lexeme, literal)
 }

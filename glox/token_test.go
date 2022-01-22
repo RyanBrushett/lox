@@ -4,7 +4,7 @@ import "testing"
 
 func TestTokenString(t *testing.T) {
 	token := NewToken(EQUAL_EQUAL, "==", nil, 0)
-	expected := "EQUAL_EQUAL == <nil> 0"
+	expected := "EQUAL_EQUAL == null"
 	actual := token.String()
 
 	if actual != expected {
