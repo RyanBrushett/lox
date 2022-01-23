@@ -16,6 +16,9 @@ func TestAcceptanceTests(t *testing.T) {
 	_, b, _, _ := runtime.Caller(0)
 	basepath := filepath.Dir(b)
 	pathToInterpreter := fmt.Sprintf("%v/../lox", basepath)
+
+	// When running locally, best to set the absolute path to the book git repo.
+	// In CI it checks the book out into the `glox` package dir.
 	bookDir := os.Getenv("BOOK_DIR")
 
 	chapters := map[string]string{
