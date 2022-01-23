@@ -1,0 +1,36 @@
+on: [push, pull_request]
+name: Acceptance Tests
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      BOOK_DIR: craftinginterpreters
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17.x
+
+      - name: Build Lox
+        run: go build -x
+
+      - name: Checkout craftinginterpreters
+        uses: actions/checkout@v2
+        with:
+          repository: munificent/craftinginterpreters
+          path: ${{ env.BOOK_DIR }}
+
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+
+      - run: make get
+        working-directory: ${{ env.BOOK_DIR }}
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'
+          bundler-cache: true
+      - name: Run Acceptance Tests
+        run: bundle exec rspec run_acceptance_tests.rb
