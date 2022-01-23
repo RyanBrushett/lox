@@ -4,11 +4,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v2
     - name: Install Go
       uses: actions/setup-go@v2
       with:
         go-version: 1.17.x
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: Test
+    - name: Run Unit Tests
       run: go test ./...
