@@ -1,8 +1,6 @@
 package glox
 
-import (
-	"fmt"
-)
+import "fmt"
 
 type loxRuntime struct {
 	HadError bool
