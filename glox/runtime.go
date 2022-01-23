@@ -1,10 +1,8 @@
 package glox
 
-import (
-	"fmt"
-)
+import "fmt"
 
-type runtime struct {
+type loxRuntime struct {
 	HadError bool
 }
 
@@ -22,13 +20,13 @@ func (e *runtimeError) Error() string {
 	return fmt.Sprintf("[Line %d] Error%d: %v\n", e.line, e.where, e.Err)
 }
 
-func NewRuntime() *runtime {
-	return &runtime{
+func NewRuntime() *loxRuntime {
+	return &loxRuntime{
 		HadError: false,
 	}
 }
 
-func (r *runtime) Run(source string) {
+func (r *loxRuntime) Run(source string) {
 	tokens, err := NewScanner(source).ScanTokens()
 
 	if err != nil {
@@ -41,7 +39,7 @@ func (r *runtime) Run(source string) {
 	}
 }
 
-func (r *runtime) reportError(e error) {
+func (r *loxRuntime) reportError(e error) {
 	fmt.Println(e)
 	r.HadError = true
 }
