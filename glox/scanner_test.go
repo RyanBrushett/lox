@@ -132,6 +132,13 @@ func TestWhitespace(t *testing.T) {
 	compareTokensInOrder(tokenList, expectedTokens, t)
 }
 
+func TestComments(t *testing.T) {
+	source := `// This is a comment`
+	tokenList := scanSource(source, t)
+	expectedTokens := []*Token{NewToken(EOF, "", nil, 0)}
+	compareTokensInOrder(tokenList, expectedTokens, t)
+}
+
 func scanSource(source string, t *testing.T) []*Token {
 	scanner := NewScanner(source)
 	tokenList, err := scanner.ScanTokens()
