@@ -123,10 +123,12 @@ func (s *scanner) scanToken() error {
 		return nil
 	case '/':
 		if s.match('/') {
-			// A comment reaches the end of the line
+			// A slash-style comment reaches the end of the line
 			for s.peek() != '\n' && !s.isAtEnd() {
 				s.advance()
 			}
+		} else if s.match('*') {
+			s.cStyleComment()
 		} else {
 			s.addToken(SLASH, nil)
 		}
@@ -201,6 +203,27 @@ func (s *scanner) identifier() {
 	}
 
 	s.addToken(IDENTIFIER, nil)
+}
+
+func (s *scanner) cStyleComment() {
+	for !s.isAtEnd() {
+		c := s.advance()
+		switch c {
+		case '\n':
+			s.line += 1
+		case '/':
+			if s.match('*') {
+				s.cStyleComment()
+			}
+		case '*':
+			if s.peek() == '/' {
+				s.advance()
+				return
+			}
+		default:
+			continue
+		}
+	}
 }
 
 func (s *scanner) advance() byte {

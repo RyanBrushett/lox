@@ -1,6 +1,10 @@
 package glox
 
-import "testing"
+import (
+	"fmt"
+	"strings"
+	"testing"
+)
 
 func TestNumbers(t *testing.T) {
 	source := `123
@@ -19,7 +23,7 @@ func TestNumbers(t *testing.T) {
 		NewToken(EOF, "", nil, 4),
 	}
 
-	compareTokens(tokenList, expectedTokens, t)
+	compareTokensInOrder(tokenList, expectedTokens, t)
 }
 
 func TestIdentifiers(t *testing.T) {
@@ -40,7 +44,7 @@ func TestIdentifiers(t *testing.T) {
 		NewToken(EOF, "", nil, 2),
 	}
 
-	compareTokens(tokenList, expectedTokens, t)
+	compareTokensInOrder(tokenList, expectedTokens, t)
 }
 
 func TestStrings(t *testing.T) {
@@ -55,7 +59,7 @@ func TestStrings(t *testing.T) {
 		NewToken(EOF, "", nil, 2),
 	}
 
-	compareTokens(tokenList, expectedTokens, t)
+	compareTokensInOrder(tokenList, expectedTokens, t)
 }
 
 func TestKeywords(t *testing.T) {
@@ -81,7 +85,7 @@ func TestKeywords(t *testing.T) {
 		NewToken(EOF, "", nil, 0),
 	}
 
-	compareTokens(tokenList, expectedTokens, t)
+	compareTokensInOrder(tokenList, expectedTokens, t)
 }
 
 func TestPunctuators(t *testing.T) {
@@ -110,7 +114,7 @@ func TestPunctuators(t *testing.T) {
 		NewToken(EOF, "", nil, 0),
 	}
 
-	compareTokens(tokenList, expectedTokens, t)
+	compareTokensInOrder(tokenList, expectedTokens, t)
 }
 
 func TestWhitespace(t *testing.T) {
@@ -125,7 +129,40 @@ func TestWhitespace(t *testing.T) {
 		NewToken(EOF, "", nil, 5),
 	}
 
-	compareTokens(tokenList, expectedTokens, t)
+	compareTokensInOrder(tokenList, expectedTokens, t)
+}
+
+func TestComments(t *testing.T) {
+	source := `// This is a comment`
+	tokenList := scanSource(source, t)
+	expectedTokens := []*Token{NewToken(EOF, "", nil, 0)}
+	compareTokensInOrder(tokenList, expectedTokens, t)
+}
+
+func TestCStyleComments(t *testing.T) {
+	source := `/* Hello */
+	/*
+	  Multi-line comment
+	*/
+
+	/* /* Nested comment */ */
+	/*/*/**/*/*/
+	"A string!"
+	`
+	tokenList := scanSource(source, t)
+	expectedTokens := []*Token{
+		NewToken(STRING, `"A string!"`, `A string!`, 7),
+		NewToken(EOF, "", nil, 8),
+	}
+
+	compareTokensInOrder(tokenList, expectedTokens, t)
+}
+
+func TestUnfinishedCStyleComment(t *testing.T) {
+	source := `/*`
+	tokenList := scanSource(source, t)
+	expectedToken := []*Token{NewToken(EOF, "", nil, 0)}
+	compareTokensInOrder(tokenList, expectedToken, t)
 }
 
 func scanSource(source string, t *testing.T) []*Token {
@@ -138,14 +175,29 @@ func scanSource(source string, t *testing.T) []*Token {
 	return tokenList
 }
 
-func compareTokens(tokenList []*Token, expectedTokens []*Token, t *testing.T) {
+func compareTokensInOrder(tokenList []*Token, expectedTokens []*Token, t *testing.T) {
 	if len(tokenList) != len(expectedTokens) {
-		t.Errorf("Tokens Not Correct. Expected: %d Got: %d", len(expectedTokens), len(tokenList))
+		var sb strings.Builder
+		for _, token := range tokenList {
+			tokenString := fmt.Sprintf("[ %s ]\n", token.String())
+			sb.WriteString(tokenString)
+		}
+
+		t.Errorf(
+			"Token Count Not Correct.\n\nTokens Got:\n%v\nExpected Count: %d\nGot Count: %d",
+			sb.String(), len(expectedTokens), len(tokenList),
+		)
+		return
 	}
 
 	for i, token := range tokenList {
 		if *token != *expectedTokens[i] {
-			t.Errorf("Token does not match expected. Expected: %v Got %v", token, expectedTokens[i])
+			expectedToken := expectedTokens[i]
+			t.Errorf(
+				"Token does not match expected.\n\nExpected: %v line %d\nGot %v line %d",
+				token, token.line, expectedToken, expectedToken.line,
+			)
+			return
 		}
 	}
 }
