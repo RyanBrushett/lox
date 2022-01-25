@@ -216,8 +216,7 @@ func (s *scanner) cStyleComment() {
 				s.cStyleComment()
 			}
 		case '*':
-			if s.peek() == '/' {
-				s.advance()
+			if s.match('/') {
 				return
 			}
 		default:
