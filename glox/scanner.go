@@ -141,9 +141,9 @@ func (s *scanner) scanToken() error {
 	case '"':
 		return s.stringLiteral()
 	default:
-		if s.isDigit(c) {
+		if isDigit(c) {
 			return s.numberLiteral()
-		} else if s.isAlpha(c) {
+		} else if isAlpha(c) {
 			s.identifier()
 			return nil
 		} else {
@@ -171,13 +171,13 @@ func (s *scanner) stringLiteral() error {
 }
 
 func (s *scanner) numberLiteral() error {
-	for s.isDigit(s.peek()) {
+	for isDigit(s.peek()) {
 		s.advance()
 	}
 
-	if s.peek() == '.' && s.isDigit(s.peekNext()) {
+	if s.peek() == '.' && isDigit(s.peekNext()) {
 		s.advance()
-		for s.isDigit(s.peek()) {
+		for isDigit(s.peek()) {
 			s.advance()
 		}
 	}
@@ -191,7 +191,7 @@ func (s *scanner) numberLiteral() error {
 }
 
 func (s *scanner) identifier() {
-	for s.isAlphaNumeric(s.peek()) {
+	for isAlphaNumeric(s.peek()) {
 		s.advance()
 	}
 
@@ -261,20 +261,20 @@ func (s *scanner) isAtEnd() bool {
 	return s.current >= len(s.source)
 }
 
-func (s *scanner) isDigit(c byte) bool {
-	return unicode.IsNumber(rune(c))
-}
-
-func (s *scanner) isAlpha(c byte) bool {
-	return unicode.IsLetter(rune(c)) || c == '_'
-}
-
-func (s *scanner) isAlphaNumeric(c byte) bool {
-	return s.isAlpha(c) || s.isDigit(c)
-}
-
 func (s *scanner) addToken(tt TokenType, literal interface{}) {
 	text := s.source[s.start:s.current]
 	token := NewToken(tt, text, literal, s.line)
 	s.tokenList = append(s.tokenList, token)
+}
+
+func isDigit(c byte) bool {
+	return unicode.IsNumber(rune(c))
+}
+
+func isAlpha(c byte) bool {
+	return unicode.IsLetter(rune(c)) || c == '_'
+}
+
+func isAlphaNumeric(c byte) bool {
+	return isAlpha(c) || isDigit(c)
 }
