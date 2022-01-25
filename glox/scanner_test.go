@@ -139,6 +139,25 @@ func TestComments(t *testing.T) {
 	compareTokensInOrder(tokenList, expectedTokens, t)
 }
 
+func TestCStyleComments(t *testing.T) {
+	source := `/* Hello */
+	/*
+	  Multi-line comment
+	*/
+
+	/* /* Nested comment */ */
+	/*/*/**/*/*/
+	"A string!"
+	`
+	tokenList := scanSource(source, t)
+	expectedTokens := []*Token{
+		NewToken(STRING, `"A string!"`, `A string!`, 7),
+		NewToken(EOF, "", nil, 8),
+	}
+
+	compareTokensInOrder(tokenList, expectedTokens, t)
+}
+
 func scanSource(source string, t *testing.T) []*Token {
 	scanner := NewScanner(source)
 	tokenList, err := scanner.ScanTokens()
