@@ -158,6 +158,13 @@ func TestCStyleComments(t *testing.T) {
 	compareTokensInOrder(tokenList, expectedTokens, t)
 }
 
+func TestUnfinishedCStyleComment(t *testing.T) {
+	source := `/*`
+	tokenList := scanSource(source, t)
+	expectedToken := []*Token{NewToken(EOF, "", nil, 0)}
+	compareTokensInOrder(tokenList, expectedToken, t)
+}
+
 func scanSource(source string, t *testing.T) []*Token {
 	scanner := NewScanner(source)
 	tokenList, err := scanner.ScanTokens()
