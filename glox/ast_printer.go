@@ -27,7 +27,16 @@ func (ap *astPrinter) visitLiteralExpr(expr *Literal) (interface{}, error) {
 	if expr.Value == nil {
 		return "nil", nil
 	}
-	return fmt.Sprintf("%v", expr.Value), nil
+	switch expr.Value.(type) {
+	default:
+		return fmt.Sprintf("%v", expr.Value), nil
+	case float64:
+		if expr.Value == float64(int64(expr.Value.(float64))) {
+			return fmt.Sprintf("%.1f", expr.Value), nil // lox acceptance tests expect printed integers to end with `.0`
+		} else {
+			return fmt.Sprintf("%v", expr.Value), nil
+		}
+	}
 }
 
 func (ap *astPrinter) visitUnaryExpr(expr *Unary) (interface{}, error) {
