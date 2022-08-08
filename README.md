@@ -2,4 +2,4 @@
 
 [See Crafting Interpreters](https://craftinginterpreters.com/)
 
-Book club at work.
+Sharpen up my go, learn a thing or two about programming languages.
