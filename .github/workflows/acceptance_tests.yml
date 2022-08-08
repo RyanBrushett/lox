@@ -2,6 +2,7 @@ on: [push, pull_request]
 name: Acceptance Tests
 jobs:
   test:
+    name: Acceptance Tests
     runs-on: ubuntu-latest
     env:
       BOOK_DIR: craftinginterpreters
