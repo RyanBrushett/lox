@@ -23,7 +23,7 @@ func TestAcceptanceTests(t *testing.T) {
 
 	chapters := map[string]string{
 		"chap04_scanning":    "run",
-		"chap06_parsing":     "todo",
+		"chap06_parsing":     "run",
 		"chap07_evaluating":  "todo",
 		"chap08_statements":  "todo",
 		"chap09_control":     "todo",
@@ -53,6 +53,11 @@ func TestAcceptanceTests(t *testing.T) {
 			"--interpreter",
 			pathToInterpreter,
 		)
+
+		// So we can run a specific chapter's tests
+		cmd.Env = os.Environ()
+		cmd.Env = append(cmd.Env, fmt.Sprintf("CHAPTER=%s", chapter))
+
 		cmd.Dir = bookDir
 
 		out, err := cmd.Output()

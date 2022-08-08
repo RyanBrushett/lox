@@ -1,6 +1,9 @@
 package glox
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+)
 
 type loxRuntime struct {
 	HadError bool
@@ -8,16 +11,25 @@ type loxRuntime struct {
 
 type runtimeError struct {
 	line  int
-	where int
+	where string
 	Err   error
 }
 
 func RuntimeError(line int, err error) *runtimeError {
-	return &runtimeError{line, 0, err}
+	return &runtimeError{line, "0", err}
+}
+
+func ParseError(token *Token, err error) *runtimeError {
+	if token.tokenType == EOF {
+		return &runtimeError{token.line, " at end", err}
+	} else {
+		at := fmt.Sprintf(" at '%s'", token.lexeme)
+		return &runtimeError{token.line, at, err}
+	}
 }
 
 func (e *runtimeError) Error() string {
-	return fmt.Sprintf("[Line %d] Error%d: %v\n", e.line, e.where, e.Err)
+	return fmt.Sprintf("[Line %d] Error%s: %v\n", e.line, e.where, e.Err)
 }
 
 func NewRuntime() *loxRuntime {
@@ -31,12 +43,29 @@ func (r *loxRuntime) Run(source string) {
 
 	if err != nil {
 		r.reportError(err)
+		return
 	}
 
-	// for now just print
-	for _, t := range tokens {
-		fmt.Printf("%s\n", t)
+	// This is gnarly. I'm only doing this so the previous chapter's
+	// acceptance tests can run without the other chapter's work
+	// making them fail.
+	if os.Getenv("CHAPTER") == "chap04_scanning" {
+		for _, t := range tokens {
+			fmt.Printf("%s\n", t)
+		}
+		return
 	}
+
+	parser := NewParser(tokens)
+	exp := parser.parse()
+	out, err := NewAstPrinter().print(exp)
+
+	if err != nil {
+		r.reportError(err)
+		return
+	}
+
+	fmt.Printf("%s\n", out)
 }
 
 func (r *loxRuntime) reportError(e error) {
