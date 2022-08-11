@@ -21,7 +21,24 @@ func (p *parser) parse() Expr {
 }
 
 func (p *parser) expression() Expr {
-	return p.equality()
+	return p.ternary()
+}
+
+func (p *parser) ternary() Expr {
+	var expr Expr
+	expr = p.equality()
+
+	if p.match(QUESTION) {
+		leftOperator := p.previous() // grab the QUESTION since that's the left operator.
+		middle := p.expression()
+		rightOperator, err := p.consume(COLON, "Expect ':' after expression")
+		if err != nil {
+			panic(err)
+		}
+		right := p.expression()
+		expr = NewTernary(expr, leftOperator, middle, rightOperator, right)
+	}
+	return expr
 }
 
 func (p *parser) equality() Expr {

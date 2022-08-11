@@ -89,7 +89,7 @@ func TestKeywords(t *testing.T) {
 }
 
 func TestPunctuators(t *testing.T) {
-	source := `(){};,+-*!===<=>=!=<>/.`
+	source := `(){};,+-*!===<=>=!=<>/.?:`
 
 	tokenList := scanSource(source, t)
 	expectedTokens := []*Token{
@@ -111,6 +111,8 @@ func TestPunctuators(t *testing.T) {
 		NewToken(GREATER, ">", nil, 0),
 		NewToken(SLASH, "/", nil, 0),
 		NewToken(DOT, ".", nil, 0),
+		NewToken(QUESTION, "?", nil, 0),
+		NewToken(COLON, ":", nil, 0),
 		NewToken(EOF, "", nil, 0),
 	}
 

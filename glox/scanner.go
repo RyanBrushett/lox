@@ -93,6 +93,12 @@ func (s *scanner) scanToken() error {
 	case '*':
 		s.addToken(STAR, nil)
 		return nil
+	case '?':
+		s.addToken(QUESTION, nil)
+		return nil
+	case ':':
+		s.addToken(COLON, nil)
+		return nil
 	case '!':
 		if s.match('=') {
 			s.addToken(BANG_EQUAL, nil)

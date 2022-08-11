@@ -23,6 +23,13 @@ func (ap *astPrinter) visitGroupingExpr(expr *Grouping) (interface{}, error) {
 	return ap.parenthesize("group", expr.Expression)
 }
 
+func (ap *astPrinter) visitTernaryExpr(expr *Ternary) (interface{}, error) {
+	return ap.parenthesize(
+		fmt.Sprintf("%s%s", expr.LeftOperator.lexeme, expr.RightOperator.lexeme),
+		expr.Left, expr.Middle, expr.Right,
+	)
+}
+
 func (ap *astPrinter) visitLiteralExpr(expr *Literal) (interface{}, error) {
 	if expr.Value == nil {
 		return "nil", nil
