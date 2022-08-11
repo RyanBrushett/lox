@@ -69,6 +69,32 @@ func TestParserParsesCorrectlyBangEqualNilTrueFalse(t *testing.T) {
 	}
 }
 
+func TestParserTernaryOperator(t *testing.T) {
+	parser := simpleTestParser(`1 > 2 ? 1 : 2`, t)
+	expression := parser.parse()
+	expected := `(?: (> 1.0 2.0) 1.0 2.0)`
+	actual, _ := NewAstPrinter().print(expression)
+	if actual != expected {
+		t.Errorf(
+			"Incorrect parsing.\n\nExpected: %s\nGot: %s",
+			expected, actual,
+		)
+	}
+}
+
+func TestParserTernaryOperatorNested(t *testing.T) {
+	parser := simpleTestParser(`1 == 2 ? 3 ? 4 : 5 : 6 ? 7 : 8`, t)
+	expression := parser.parse()
+	expected := `(?: (== 1.0 2.0) (?: 3.0 4.0 5.0) (?: 6.0 7.0 8.0))`
+	actual, _ := NewAstPrinter().print(expression)
+	if actual != expected {
+		t.Errorf(
+			"Incorrect parsing.\n\nExpected: %s\nGot: %s",
+			expected, actual,
+		)
+	}
+}
+
 func TestParserNotIsAtEnd(t *testing.T) {
 	parser := simpleTestParser("123", t)
 	if parser.isAtEnd() {
