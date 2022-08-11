@@ -9,6 +9,7 @@ type VisitorExpr interface {
 	visitGroupingExpr(*Grouping) (interface{}, error)
 	visitLiteralExpr(*Literal) (interface{}, error)
 	visitUnaryExpr(*Unary) (interface{}, error)
+	visitTernaryExpr(*Ternary) (interface{}, error)
 }
 
 type Binary struct {
@@ -60,4 +61,20 @@ func NewUnary(operator *Token, right Expr) Expr {
 
 func (u *Unary) Accept(visitor VisitorExpr) (interface{}, error) {
 	return visitor.visitUnaryExpr(u)
+}
+
+type Ternary struct {
+	Left          Expr
+	LeftOperator  *Token
+	Middle        Expr
+	RightOperator *Token
+	Right         Expr
+}
+
+func NewTernary(left Expr, lo *Token, middle Expr, ro *Token, right Expr) Expr {
+	return &Ternary{left, lo, middle, ro, right}
+}
+
+func (t *Ternary) Accept(visitor VisitorExpr) (interface{}, error) {
+	return visitor.visitTernaryExpr(t)
 }
