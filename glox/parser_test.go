@@ -1,8 +1,6 @@
 package glox
 
-import (
-	"testing"
-)
+import "testing"
 
 func TestParserParsesCorrectlySimple(t *testing.T) {
 	parser := simpleTestParser("1 + 1", t)
