@@ -24,7 +24,7 @@ func TestAcceptanceTests(t *testing.T) {
 	chapters := map[string]string{
 		"chap04_scanning":    "run",
 		"chap06_parsing":     "run",
-		"chap07_evaluating":  "todo",
+		"chap07_evaluating":  "run",
 		"chap08_statements":  "todo",
 		"chap09_control":     "todo",
 		"chap10_functions":   "todo",

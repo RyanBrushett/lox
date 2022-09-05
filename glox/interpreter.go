@@ -2,6 +2,7 @@ package glox
 
 import (
 	"errors"
+	"fmt"
 	"reflect"
 )
 
@@ -11,12 +12,21 @@ func NewInterpreter() *interpreter {
 	return &interpreter{}
 }
 
+func (i *interpreter) Interpret(expr Expr) error {
+	value, err := i.evaluate(expr)
+	if err != nil {
+		return RuntimeError(0, err)
+	}
+	fmt.Printf("%v\n", value)
+	return nil
+}
+
 func (i *interpreter) visitLiteralExpr(literal *Literal) (interface{}, error) {
 	return literal.Value, nil
 }
 
 func (i *interpreter) visitGroupingExpr(expr *Grouping) (interface{}, error) {
-	return i.evaluate(expr)
+	return i.evaluate(expr.Expression)
 }
 
 func (i *interpreter) visitUnaryExpr(expr *Unary) (interface{}, error) {
@@ -39,6 +49,7 @@ func (i *interpreter) visitBinaryExpr(expr *Binary) (interface{}, error) {
 
 	switch expr.Operator.tokenType {
 	case MINUS:
+		i.checkNumericOperand(right)
 		return left.(float64) - right.(float64), nil
 	case PLUS:
 		if i.isString(left) && i.isString(right) {
@@ -141,4 +152,11 @@ func (i *interpreter) isEqual(x interface{}, y interface{}) bool {
 		return true
 	}
 	return reflect.DeepEqual(x, y)
+}
+
+func (i *interpreter) checkNumericOperand(x interface{}) error {
+	if _, ok := x.(float64); !ok {
+		return fmt.Errorf("operand %v is not a numeric value", x)
+	}
+	return nil
 }

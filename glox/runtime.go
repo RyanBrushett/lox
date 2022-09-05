@@ -58,14 +58,25 @@ func (r *loxRuntime) Run(source string) {
 
 	parser := NewParser(tokens)
 	exp := parser.parse()
-	out, err := NewAstPrinter().print(exp)
 
+	if os.Getenv("CHAPTER") == "chap06_parsing" {
+		out, err := NewAstPrinter().print(exp)
+
+		if err != nil {
+			r.reportError(err)
+			return
+		}
+		fmt.Printf("%s\n", out)
+
+		return
+	}
+
+	interpreter := NewInterpreter()
+	err = interpreter.Interpret(exp)
 	if err != nil {
 		r.reportError(err)
 		return
 	}
-
-	fmt.Printf("%s\n", out)
 }
 
 func (r *loxRuntime) reportError(e error) {

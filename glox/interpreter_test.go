@@ -2,6 +2,21 @@ package glox
 
 import "testing"
 
+func TestInterpreterEvaluatesWholeExpressions(t *testing.T) {
+	interpreter := NewInterpreter()
+	testcases := map[string]float64{
+		"(5 - (3 - 1)) + -1":      2.0,
+		"-(1 + 1)":                -2.0,
+		"1 == -(2 - 3) ? 1.0 : 0": 1.0,
+	}
+
+	for source, expected := range testcases {
+		e := parsedExpression(source)
+		result, _ := interpreter.evaluate(e)
+		assertEqualWithError(result, expected, t, source)
+	}
+}
+
 func TestInterpreterEvaluatesTruthyBinary(t *testing.T) {
 	interpreter := NewInterpreter()
 	sources := []string{
@@ -66,6 +81,22 @@ func TestTernaryExpressions(t *testing.T) {
 		result, _ := interpreter.visitTernaryExpr(e.(*Ternary))
 		assertEqualWithError(result, expected, t, source)
 	}
+}
+
+func TestGroupingExpressions(t *testing.T) {
+	interpreter := NewInterpreter()
+	source := "(3 - 1)"
+	e := parsedExpression(source)
+	result, _ := interpreter.visitGroupingExpr(e.(*Grouping))
+	assertEqualWithError(result, 2.0, t, source)
+}
+
+func TestLiteralExpression(t *testing.T) {
+	interpreter := NewInterpreter()
+	source := "2"
+	e := parsedExpression(source)
+	result, _ := interpreter.visitLiteralExpr(e.(*Literal))
+	assertEqualWithError(result, 2.0, t, source)
 }
 
 func parsedExpression(source string) Expr {
