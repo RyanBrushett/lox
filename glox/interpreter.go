@@ -72,8 +72,10 @@ func (i *interpreter) visitBinaryExpr(expr *Binary) (interface{}, error) {
 			return nil, errors.New("operands in addition must both be numeric or both be strings")
 		}
 	case SLASH:
-		err := i.checkNumericOperands(expr.Operator, left, right)
-		if err != nil {
+		if err := i.checkNumericOperands(expr.Operator, left, right); err != nil {
+			return nil, err
+		}
+		if err := i.checkDivideByZero(right.(float64)); err != nil {
 			return nil, err
 		}
 		return left.(float64) / right.(float64), nil
@@ -205,6 +207,13 @@ func (i *interpreter) checkNumericOperands(operator *Token, left, right interfac
 		if err := i.checkNumericOperand(operator, x); err != nil {
 			return err
 		}
+	}
+	return nil
+}
+
+func (i *interpreter) checkDivideByZero(right float64) error {
+	if right == 0 {
+		return fmt.Errorf("cannot divide by zero")
 	}
 	return nil
 }
