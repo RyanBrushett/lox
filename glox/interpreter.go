@@ -17,6 +17,11 @@ func (i *interpreter) Interpret(expr Expr) error {
 	if err != nil {
 		return err
 	}
+
+	if value == nil {
+		value = "nil"
+	}
+
 	fmt.Printf("%v\n", value)
 	return nil
 }
@@ -64,7 +69,7 @@ func (i *interpreter) visitBinaryExpr(expr *Binary) (interface{}, error) {
 		} else if i.isNumeric(left) && i.isNumeric(right) {
 			return left.(float64) + right.(float64), nil
 		} else {
-			return nil, RuntimeError(expr.Operator.line, errors.New("something's screwed up here"))
+			return nil, errors.New("operands in addition must both be numeric or both be strings")
 		}
 	case SLASH:
 		err := i.checkNumericOperands(expr.Operator, left, right)
