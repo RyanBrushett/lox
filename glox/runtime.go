@@ -38,7 +38,11 @@ func NewRuntime() *loxRuntime {
 	}
 }
 
-func (r *loxRuntime) Run(source string) {
+func (r *loxRuntime) Run(source string, line int) {
+	if source == "exit" || source == "exit!" || source == "quit" {
+		os.Exit(0)
+	}
+
 	tokens, err := NewScanner(source).ScanTokens()
 
 	if err != nil {
@@ -58,14 +62,25 @@ func (r *loxRuntime) Run(source string) {
 
 	parser := NewParser(tokens)
 	exp := parser.parse()
-	out, err := NewAstPrinter().print(exp)
 
-	if err != nil {
-		r.reportError(err)
+	if os.Getenv("CHAPTER") == "chap06_parsing" {
+		out, err := NewAstPrinter().print(exp)
+
+		if err != nil {
+			r.reportError(err)
+			return
+		}
+		fmt.Printf("%s\n", out)
+
 		return
 	}
 
-	fmt.Printf("%s\n", out)
+	interpreter := NewInterpreter()
+	err = interpreter.Interpret(exp)
+	if err != nil {
+		r.reportError(RuntimeError(line, err))
+		return
+	}
 }
 
 func (r *loxRuntime) reportError(e error) {
