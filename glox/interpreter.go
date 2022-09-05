@@ -34,7 +34,7 @@ func (i *interpreter) visitUnaryExpr(expr *Unary) (interface{}, error) {
 
 	switch expr.Operator.tokenType {
 	case MINUS:
-		err := i.checkNumericOperand(right)
+		err := i.checkNumericOperand(expr.Operator, right)
 		if err != nil {
 			return nil, err
 		}
@@ -53,6 +53,10 @@ func (i *interpreter) visitBinaryExpr(expr *Binary) (interface{}, error) {
 
 	switch expr.Operator.tokenType {
 	case MINUS:
+		err := i.checkNumericOperands(expr.Operator, left, right)
+		if err != nil {
+			return nil, err
+		}
 		return left.(float64) - right.(float64), nil
 	case PLUS:
 		if i.isString(left) && i.isString(right) {
@@ -63,16 +67,40 @@ func (i *interpreter) visitBinaryExpr(expr *Binary) (interface{}, error) {
 			return nil, RuntimeError(expr.Operator.line, errors.New("something's screwed up here"))
 		}
 	case SLASH:
+		err := i.checkNumericOperands(expr.Operator, left, right)
+		if err != nil {
+			return nil, err
+		}
 		return left.(float64) / right.(float64), nil
 	case STAR:
+		err := i.checkNumericOperands(expr.Operator, left, right)
+		if err != nil {
+			return nil, err
+		}
 		return left.(float64) * right.(float64), nil
 	case GREATER:
+		err := i.checkNumericOperands(expr.Operator, left, right)
+		if err != nil {
+			return nil, err
+		}
 		return left.(float64) > right.(float64), nil
 	case GREATER_EQUAL:
+		err := i.checkNumericOperands(expr.Operator, left, right)
+		if err != nil {
+			return nil, err
+		}
 		return left.(float64) >= right.(float64), nil
 	case LESS:
+		err := i.checkNumericOperands(expr.Operator, left, right)
+		if err != nil {
+			return nil, err
+		}
 		return left.(float64) < right.(float64), nil
 	case LESS_EQUAL:
+		err := i.checkNumericOperands(expr.Operator, left, right)
+		if err != nil {
+			return nil, err
+		}
 		return left.(float64) <= right.(float64), nil
 	case EQUAL_EQUAL:
 		return i.isEqual(left, right), nil
@@ -157,9 +185,21 @@ func (i *interpreter) isEqual(x interface{}, y interface{}) bool {
 	return reflect.DeepEqual(x, y)
 }
 
-func (i *interpreter) checkNumericOperand(x interface{}) error {
+func (i *interpreter) checkNumericOperand(operator *Token, x interface{}) error {
 	if _, ok := x.(float64); !ok {
-		return fmt.Errorf("operand %v is not a numeric value", x)
+		return fmt.Errorf(
+			"operand '%v' in '%s' operation is not a numeric value",
+			x, operator.lexeme,
+		)
+	}
+	return nil
+}
+
+func (i *interpreter) checkNumericOperands(operator *Token, left, right interface{}) error {
+	for _, x := range []interface{}{left, right} {
+		if err := i.checkNumericOperand(operator, x); err != nil {
+			return err
+		}
 	}
 	return nil
 }
