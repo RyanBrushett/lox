@@ -34,6 +34,10 @@ func (i *interpreter) visitUnaryExpr(expr *Unary) (interface{}, error) {
 
 	switch expr.Operator.tokenType {
 	case MINUS:
+		err := i.checkNumericOperand(right)
+		if err != nil {
+			return nil, err
+		}
 		value, _ := right.(float64)
 		return -value, nil
 	case BANG:
@@ -49,10 +53,6 @@ func (i *interpreter) visitBinaryExpr(expr *Binary) (interface{}, error) {
 
 	switch expr.Operator.tokenType {
 	case MINUS:
-		err := i.checkNumericOperand(right)
-		if err != nil {
-			return nil, err
-		}
 		return left.(float64) - right.(float64), nil
 	case PLUS:
 		if i.isString(left) && i.isString(right) {
