@@ -19,7 +19,7 @@ func runScript(scriptName string) {
 	checkErr(err)
 
 	runtime := glox.NewRuntime()
-	runtime.Run(string(dat))
+	runtime.Run(string(dat), 0)
 
 	if runtime.HadError {
 		os.Exit(65)
@@ -39,7 +39,7 @@ func runPrompt() {
 			break
 		}
 
-		runtime.Run(text)
+		runtime.Run(text, line)
 		if runtime.HadError {
 			runtime.HadError = false // reset error so we don't kill the user's session
 		}

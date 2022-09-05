@@ -15,7 +15,7 @@ func NewInterpreter() *interpreter {
 func (i *interpreter) Interpret(expr Expr) error {
 	value, err := i.evaluate(expr)
 	if err != nil {
-		return RuntimeError(0, err)
+		return err
 	}
 	fmt.Printf("%v\n", value)
 	return nil
@@ -49,7 +49,10 @@ func (i *interpreter) visitBinaryExpr(expr *Binary) (interface{}, error) {
 
 	switch expr.Operator.tokenType {
 	case MINUS:
-		i.checkNumericOperand(right)
+		err := i.checkNumericOperand(right)
+		if err != nil {
+			return nil, err
+		}
 		return left.(float64) - right.(float64), nil
 	case PLUS:
 		if i.isString(left) && i.isString(right) {

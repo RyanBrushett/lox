@@ -16,7 +16,7 @@ func TestRuntimeError(t *testing.T) {
 
 func TestRuntimeRun(t *testing.T) {
 	runtime := NewRuntime()
-	runtime.Run(`"unterminated string`)
+	runtime.Run(`"unterminated string`, 0)
 	if !runtime.HadError {
 		t.Errorf("Unterminated strings should be a runtime error")
 	}

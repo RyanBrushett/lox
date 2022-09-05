@@ -38,7 +38,11 @@ func NewRuntime() *loxRuntime {
 	}
 }
 
-func (r *loxRuntime) Run(source string) {
+func (r *loxRuntime) Run(source string, line int) {
+	if source == "exit" || source == "exit!" || source == "quit" {
+		os.Exit(0)
+	}
+
 	tokens, err := NewScanner(source).ScanTokens()
 
 	if err != nil {
@@ -74,7 +78,7 @@ func (r *loxRuntime) Run(source string) {
 	interpreter := NewInterpreter()
 	err = interpreter.Interpret(exp)
 	if err != nil {
-		r.reportError(err)
+		r.reportError(RuntimeError(line, err))
 		return
 	}
 }
