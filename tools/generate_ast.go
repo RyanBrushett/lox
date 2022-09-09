@@ -19,6 +19,7 @@ func main() {
 		"Grouping : expression Expr",
 		"Literal : value interface{}",
 		"Unary : operator *Token, right Expr",
+		"Ternary : left Expr, leftOperator *Token, middle Expr, rightOperator *Token, right Expr",
 	})
 }
 

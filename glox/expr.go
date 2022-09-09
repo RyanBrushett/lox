@@ -71,8 +71,8 @@ type Ternary struct {
 	Right         Expr
 }
 
-func NewTernary(left Expr, lo *Token, middle Expr, ro *Token, right Expr) Expr {
-	return &Ternary{left, lo, middle, ro, right}
+func NewTernary(left Expr, leftOperator *Token, middle Expr, rightOperator *Token, right Expr) Expr {
+	return &Ternary{left, leftOperator, middle, rightOperator, right}
 }
 
 func (t *Ternary) Accept(visitor VisitorExpr) (interface{}, error) {
