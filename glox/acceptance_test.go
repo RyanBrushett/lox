@@ -22,8 +22,8 @@ func TestAcceptanceTests(t *testing.T) {
 	bookDir := os.Getenv("BOOK_DIR")
 
 	chapters := map[string]string{
-		"chap04_scanning":    "run",
-		"chap06_parsing":     "run",
+		"chap04_scanning":    "false",
+		"chap06_parsing":     "false",
 		"chap07_evaluating":  "run",
 		"chap08_statements":  "todo",
 		"chap09_control":     "todo",

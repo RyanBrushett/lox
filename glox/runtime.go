@@ -50,31 +50,8 @@ func (r *loxRuntime) Run(source string, line int) {
 		return
 	}
 
-	// This is gnarly. I'm only doing this so the previous chapter's
-	// acceptance tests can run without the other chapter's work
-	// making them fail.
-	if os.Getenv("CHAPTER") == "chap04_scanning" {
-		for _, t := range tokens {
-			fmt.Printf("%s\n", t)
-		}
-		return
-	}
-
 	parser := NewParser(tokens)
 	exp := parser.parse()
-
-	if os.Getenv("CHAPTER") == "chap06_parsing" {
-		out, err := NewAstPrinter().print(exp)
-
-		if err != nil {
-			r.reportError(err)
-			return
-		}
-		fmt.Printf("%s\n", out)
-
-		return
-	}
-
 	interpreter := NewInterpreter()
 	err = interpreter.Interpret(exp)
 	if err != nil {
