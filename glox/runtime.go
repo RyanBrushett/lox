@@ -9,6 +9,12 @@ type loxRuntime struct {
 	HadError bool
 }
 
+type parseError struct {
+	line  int
+	where string
+	Err   error
+}
+
 type runtimeError struct {
 	line  int
 	where string
@@ -19,13 +25,17 @@ func RuntimeError(line int, err error) *runtimeError {
 	return &runtimeError{line, "0", err}
 }
 
-func ParseError(token *Token, err error) *runtimeError {
+func ParseError(token *Token, err error) *parseError {
 	if token.tokenType == EOF {
-		return &runtimeError{token.line, " at end", err}
+		return &parseError{token.line, " at end", err}
 	} else {
 		at := fmt.Sprintf(" at '%s'", token.lexeme)
-		return &runtimeError{token.line, at, err}
+		return &parseError{token.line, at, err}
 	}
+}
+
+func (e *parseError) Error() string {
+	return fmt.Sprintf("[Line %d] Error%s: %v\n", e.line, e.where, e.Err)
 }
 
 func (e *runtimeError) Error() string {
@@ -54,6 +64,7 @@ func (r *loxRuntime) Run(source string, line int) {
 	exp := parser.parse()
 	interpreter := NewInterpreter()
 	err = interpreter.Interpret(exp)
+
 	if err != nil {
 		r.reportError(RuntimeError(line, err))
 		return

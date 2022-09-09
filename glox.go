@@ -35,10 +35,6 @@ func runPrompt() {
 		fmt.Printf("(%03d) -> ", line)
 		text, _ := reader.ReadString('\n')
 		text = strings.Replace(text, "\n", "", -1)
-		if strings.Compare(text, "exit!") == 0 {
-			break
-		}
-
 		runtime.Run(text, line)
 		if runtime.HadError {
 			runtime.HadError = false // reset error so we don't kill the user's session
