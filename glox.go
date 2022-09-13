@@ -8,15 +8,11 @@ import (
 	"strings"
 )
 
-func checkErr(err error) {
+func runScript(scriptName string) {
+	dat, err := os.ReadFile(scriptName)
 	if err != nil {
 		panic(err)
 	}
-}
-
-func runScript(scriptName string) {
-	dat, err := os.ReadFile(scriptName)
-	checkErr(err)
 
 	runtime := glox.NewRuntime()
 	runtime.Run(string(dat), 0)
@@ -29,7 +25,7 @@ func runScript(scriptName string) {
 func runPrompt() {
 	reader := bufio.NewReader(os.Stdin)
 	line := 0
-	runtime := glox.NewRuntime()
+	runtime := glox.NewREPL()
 
 	for {
 		fmt.Printf("(%03d) -> ", line)

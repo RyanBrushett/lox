@@ -7,6 +7,7 @@ import (
 
 type loxRuntime struct {
 	HadError bool
+	isREPL   bool
 }
 
 type parseError struct {
@@ -45,6 +46,14 @@ func (e *runtimeError) Error() string {
 func NewRuntime() *loxRuntime {
 	return &loxRuntime{
 		HadError: false,
+		isREPL:   false,
+	}
+}
+
+func NewREPL() *loxRuntime {
+	return &loxRuntime{
+		HadError: false,
+		isREPL:   true,
 	}
 }
 
@@ -63,7 +72,7 @@ func (r *loxRuntime) Run(source string, line int) {
 	parser := NewParser(tokens)
 	statements := parser.parse()
 	interpreter := NewInterpreter()
-	err = interpreter.Interpret(statements)
+	err = interpreter.Interpret(statements, r.isREPL)
 
 	if err != nil {
 		r.reportError(RuntimeError(line, err))

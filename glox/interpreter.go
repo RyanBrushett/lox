@@ -12,11 +12,15 @@ func NewInterpreter() *interpreter {
 	return &interpreter{}
 }
 
-func (i *interpreter) Interpret(statements []Stmt) error {
+func (i *interpreter) Interpret(statements []Stmt, inREPL bool) error {
 	for _, statement := range statements {
-		_, err := i.execute(statement)
+		value, err := i.execute(statement)
 		if err != nil {
-			return errors.New("some error")
+			return err
+		}
+
+		if inREPL && value != nil {
+			fmt.Printf("%v\n", value)
 		}
 	}
 	return nil
