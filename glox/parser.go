@@ -1,8 +1,6 @@
 package glox
 
-import (
-	"errors"
-)
+import "errors"
 
 type parser struct {
 	tokens  []*Token
@@ -16,8 +14,44 @@ func NewParser(tokens []*Token) *parser {
 	}
 }
 
-func (p *parser) parse() Expr {
+func (p *parser) parse() []Stmt {
+	var statements []Stmt
+	for !p.isAtEnd() {
+		statements = append(statements, p.statement())
+	}
+
+	return statements
+}
+
+func (p *parser) parseExpression() Expr {
 	return p.expression()
+}
+
+func (p *parser) statement() Stmt {
+	if p.match(PRINT) {
+		return p.printStatement()
+	}
+
+	return p.expressionStatement()
+}
+
+func (p *parser) printStatement() Stmt {
+	value := p.expression()
+	_, err := p.consume(SEMICOLON, "Expect ';' after value.")
+	if err != nil {
+		panic(err)
+	}
+	return NewPrint(value)
+}
+
+func (p *parser) expressionStatement() Stmt {
+	expr := p.expression()
+	_, err := p.consume(SEMICOLON, "Expect ';' after expression.")
+	if err != nil {
+		panic(err)
+	}
+
+	return NewExpression(expr)
 }
 
 func (p *parser) expression() Expr {

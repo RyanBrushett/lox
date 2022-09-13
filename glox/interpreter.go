@@ -12,18 +12,32 @@ func NewInterpreter() *interpreter {
 	return &interpreter{}
 }
 
-func (i *interpreter) Interpret(expr Expr) error {
-	value, err := i.evaluate(expr)
-	if err != nil {
-		return err
+func (i *interpreter) Interpret(statements []Stmt) error {
+	for _, statement := range statements {
+		_, err := i.execute(statement)
+		if err != nil {
+			return errors.New("some error")
+		}
 	}
+	return nil
+}
 
-	if value == nil {
-		value = "nil"
+func (i *interpreter) execute(statement Stmt) (interface{}, error) {
+	return statement.Accept(i)
+}
+
+func (i *interpreter) visitExpressionStmt(stmt *Expression) (interface{}, error) {
+	return i.evaluate(stmt.Expression)
+}
+
+func (i *interpreter) visitPrintStmt(stmt *Print) (interface{}, error) {
+	value, err := i.evaluate(stmt.Expression)
+	if err != nil {
+		return nil, err
 	}
 
 	fmt.Printf("%v\n", value)
-	return nil
+	return nil, nil
 }
 
 func (i *interpreter) visitLiteralExpr(literal *Literal) (interface{}, error) {

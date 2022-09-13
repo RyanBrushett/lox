@@ -4,7 +4,7 @@ import "testing"
 
 func TestParserParsesCorrectlySimple(t *testing.T) {
 	parser := simpleTestParser("1 + 1", t)
-	expression := parser.parse()
+	expression := parser.parseExpression()
 	expected := "(+ 1.0 1.0)"
 	actual, _ := NewAstPrinter().print(expression)
 	if actual != expected {
@@ -17,7 +17,7 @@ func TestParserParsesCorrectlySimple(t *testing.T) {
 
 func TestParserParsesCorrectlyAcceptanceTestExample(t *testing.T) {
 	parser := simpleTestParser("(5 - (3 - 1)) + -1", t)
-	expression := parser.parse()
+	expression := parser.parseExpression()
 	expected := "(+ (group (- 5.0 (group (- 3.0 1.0)))) (- 1.0))"
 	actual, _ := NewAstPrinter().print(expression)
 	if actual != expected {
@@ -30,7 +30,7 @@ func TestParserParsesCorrectlyAcceptanceTestExample(t *testing.T) {
 
 func TestParserParsesCorrectlyBetterExample(t *testing.T) {
 	parser := simpleTestParser("6 + 3 * 2 / 3 - 1 + -1 + (3 + 3)", t)
-	expression := parser.parse()
+	expression := parser.parseExpression()
 	expected := "(+ (+ (- (+ 6.0 (* 3.0 (/ 2.0 3.0))) 1.0) (- 1.0)) (group (+ 3.0 3.0)))"
 	actual, _ := NewAstPrinter().print(expression)
 	if actual != expected {
@@ -43,7 +43,7 @@ func TestParserParsesCorrectlyBetterExample(t *testing.T) {
 
 func TestParserParsesCorrectlyGreaterLess(t *testing.T) {
 	parser := simpleTestParser("6 < 3 <= 3 >= 1 > 0", t)
-	expression := parser.parse()
+	expression := parser.parseExpression()
 	expected := "(> (>= (<= (< 6.0 3.0) 3.0) 1.0) 0.0)"
 	actual, _ := NewAstPrinter().print(expression)
 	if actual != expected {
@@ -56,7 +56,7 @@ func TestParserParsesCorrectlyGreaterLess(t *testing.T) {
 
 func TestParserParsesCorrectlyBangEqualNilTrueFalse(t *testing.T) {
 	parser := simpleTestParser(`1 != 2 == true == false == nil != "hello"`, t)
-	expression := parser.parse()
+	expression := parser.parseExpression()
 	expected := "(!= (== (== (== (!= 1.0 2.0) true) false) nil) hello)"
 	actual, _ := NewAstPrinter().print(expression)
 	if actual != expected {
@@ -69,7 +69,7 @@ func TestParserParsesCorrectlyBangEqualNilTrueFalse(t *testing.T) {
 
 func TestParserTernaryOperator(t *testing.T) {
 	parser := simpleTestParser(`1 > 2 ? 1 : 2`, t)
-	expression := parser.parse()
+	expression := parser.parseExpression()
 	expected := `(?: (> 1.0 2.0) 1.0 2.0)`
 	actual, _ := NewAstPrinter().print(expression)
 	if actual != expected {
@@ -82,7 +82,7 @@ func TestParserTernaryOperator(t *testing.T) {
 
 func TestParserTernaryOperatorNested(t *testing.T) {
 	parser := simpleTestParser(`1 == 2 ? 3 ? 4 : 5 : 6 ? 7 : 8`, t)
-	expression := parser.parse()
+	expression := parser.parseExpression()
 	expected := `(?: (== 1.0 2.0) (?: 3.0 4.0 5.0) (?: 6.0 7.0 8.0))`
 	actual, _ := NewAstPrinter().print(expression)
 	if actual != expected {

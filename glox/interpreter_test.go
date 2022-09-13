@@ -102,7 +102,7 @@ func TestLiteralExpression(t *testing.T) {
 func parsedExpression(source string) Expr {
 	tokens, _ := NewScanner(source).ScanTokens()
 	parser := NewParser(tokens)
-	return parser.parse()
+	return parser.parseExpression()
 }
 
 func assertEqualWithError(result interface{}, expected interface{}, t *testing.T, source string) {

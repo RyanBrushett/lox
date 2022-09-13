@@ -61,9 +61,9 @@ func (r *loxRuntime) Run(source string, line int) {
 	}
 
 	parser := NewParser(tokens)
-	exp := parser.parse()
+	statements := parser.parse()
 	interpreter := NewInterpreter()
-	err = interpreter.Interpret(exp)
+	err = interpreter.Interpret(statements)
 
 	if err != nil {
 		r.reportError(RuntimeError(line, err))

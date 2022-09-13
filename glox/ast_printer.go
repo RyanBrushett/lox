@@ -15,6 +15,14 @@ func (ap *astPrinter) print(expr Expr) (interface{}, error) {
 	return expr.Accept(ap)
 }
 
+func (ap *astPrinter) visitExpressionStmt(stmt *Expression) (interface{}, error) {
+	return nil, nil
+}
+
+func (ap *astPrinter) visitPrintStmt(stmt *Print) (interface{}, error) {
+	return nil, nil
+}
+
 func (ap *astPrinter) visitBinaryExpr(expr *Binary) (interface{}, error) {
 	return ap.parenthesize(expr.Operator.lexeme, expr.Left, expr.Right)
 }
