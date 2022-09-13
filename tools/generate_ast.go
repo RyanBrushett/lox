@@ -9,7 +9,7 @@ import (
 
 func main() {
 	if len(os.Args) != 2 {
-		fmt.Fprintf(os.Stderr, "Usage: generate_ast.go <full path to output dir>\n")
+		fmt.Fprintf(os.Stderr, "Usage: go run ./tools/generate_ast.go <SOME_PATH>/lox/glox/\n")
 		os.Exit(64)
 		return
 	}
@@ -20,6 +20,11 @@ func main() {
 		"Literal : value interface{}",
 		"Unary : operator *Token, right Expr",
 		"Ternary : left Expr, leftOperator *Token, middle Expr, rightOperator *Token, right Expr",
+	})
+
+	defineAst(outputDir, "Stmt", []string{
+		"Expression : expression Expr",
+		"Print      : expression Expr",
 	})
 }
 
