@@ -30,6 +30,10 @@ func (i *interpreter) execute(statement Stmt) (interface{}, error) {
 	return statement.Accept(i)
 }
 
+func (i *interpreter) visitVarStmt(stmt *Var) (interface{}, error) {
+	return i.evaluate(stmt.Initializer) // TODO
+}
+
 func (i *interpreter) visitExpressionStmt(stmt *Expression) (interface{}, error) {
 	return i.evaluate(stmt.Expression)
 }
@@ -147,6 +151,10 @@ func (i *interpreter) visitTernaryExpr(expr *Ternary) (interface{}, error) {
 
 func (i *interpreter) evaluate(expr Expr) (interface{}, error) {
 	return expr.Accept(i)
+}
+
+func (i *interpreter) visitVariableExpr(expr *Variable) (interface{}, error) {
+	return nil, nil // TODO
 }
 
 func (i *interpreter) isTruthy(x interface{}) bool {

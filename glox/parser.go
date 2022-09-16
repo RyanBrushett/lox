@@ -27,6 +27,15 @@ func (p *parser) parseExpression() Expr {
 	return p.expression()
 }
 
+func (p *parser) declaration() Stmt {
+	if p.match(VAR) {
+		return p.varDeclaration()
+	}
+	return p.statement()
+
+	// Error handling in here somewhere
+}
+
 func (p *parser) statement() Stmt {
 	if p.match(PRINT) {
 		return p.printStatement()
@@ -56,6 +65,21 @@ func (p *parser) expressionStatement() Stmt {
 
 func (p *parser) expression() Expr {
 	return p.ternary()
+}
+
+func (p *parser) varDeclaration() Stmt {
+	name, err := p.consume(IDENTIFIER, "Expect a variable name.")
+	if err != nil {
+		panic(err)
+	}
+	var initializer Expr
+
+	if p.match(EQUAL) {
+		initializer = p.expression()
+	}
+
+	p.consume(SEMICOLON, "Expect ';' after variable declaration.")
+	return NewVar(name, initializer)
 }
 
 func (p *parser) ternary() Expr {
@@ -151,6 +175,10 @@ func (p *parser) primary() Expr {
 
 	if p.match(NUMBER, STRING) {
 		return NewLiteral(p.previous().literal)
+	}
+
+	if p.match(IDENTIFIER) {
+		return NewVariable(p.previous())
 	}
 
 	if p.match(LEFT_PAREN) {

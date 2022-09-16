@@ -15,6 +15,10 @@ func (ap *astPrinter) print(expr Expr) (interface{}, error) {
 	return expr.Accept(ap)
 }
 
+func (ap *astPrinter) visitVariableExpr(expr *Variable) (interface{}, error) {
+	return nil, nil // TODO
+}
+
 func (ap *astPrinter) visitExpressionStmt(stmt *Expression) (interface{}, error) {
 	return nil, nil
 }

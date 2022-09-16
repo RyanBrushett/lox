@@ -10,6 +10,7 @@ type VisitorExpr interface {
 	visitLiteralExpr(*Literal) (interface{}, error)
 	visitUnaryExpr(*Unary) (interface{}, error)
 	visitTernaryExpr(*Ternary) (interface{}, error)
+	visitVariableExpr(*Variable) (interface{}, error)
 }
 
 type Binary struct {
@@ -77,4 +78,16 @@ func NewTernary(left Expr, leftOperator *Token, middle Expr, rightOperator *Toke
 
 func (t *Ternary) Accept(visitor VisitorExpr) (interface{}, error) {
 	return visitor.visitTernaryExpr(t)
+}
+
+type Variable struct {
+	Name *Token
+}
+
+func NewVariable(name *Token) Expr {
+	return &Variable{name}
+}
+
+func (v *Variable) Accept(visitor VisitorExpr) (interface{}, error) {
+	return visitor.visitVariableExpr(v)
 }
